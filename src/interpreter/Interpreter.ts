@@ -24,7 +24,6 @@ export class Interpreter {
   }
 
   private anonymCounter = 1;
-  private seenSchemas: Map<InterpreterSchemaType, CommonModel> = new Map();
   
   /**
    * Transforms a schema into instances of CommonModel by processing all keywords from schema documents and infers the model definition.
@@ -33,19 +32,19 @@ export class Interpreter {
    * @param interpreterOptions to control the interpret process
    */
   interpret(schema: InterpreterSchemaType, options: InterpreterOptions = Interpreter.defaultInterpreterOptions): CommonModel | undefined {
-    if (this.seenSchemas.has(schema)) {
+    /*if (this.seenSchemas.has(schema)) {
       const cachedModel = this.seenSchemas.get(schema); 
       if (cachedModel !== undefined) {
         return cachedModel;
       }
-    }
+    }*/
     //If it is a false validation schema return no CommonModel
     if (schema === false) {
       return undefined;
     } 
     const model = new CommonModel();
     model.originalInput = schema;
-    this.seenSchemas.set(schema, model);
+    //this.seenSchemas.set(schema, model);
     this.interpretSchema(model, schema, options);
     return model;
   }
