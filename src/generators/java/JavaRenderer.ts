@@ -61,12 +61,20 @@ export abstract class JavaRenderer extends AbstractRenderer<JavaOptions, JavaGen
     const kind = TypeHelpers.extractKind(model);
     if (
       kind === ModelKind.PRIMITIVE ||
-      kind === ModelKind.ARRAY
+      kind === ModelKind.ARRAY ||
+        model.enum !== undefined && model.enum.length === 1
     ) {
       const format = model.getFromOriginalInput('format');
       return this.toClassType(this.toJavaType(format || model.type, model));
     }
     return this.nameType(model.$id, model);
+  }
+
+  renderAssignment(model: CommonModel | CommonModel[]): string {
+    if (!Array.isArray(model) && model.enum !== undefined && model.enum.length === 1) {
+      return `"${model.enum[0]}"`;
+    }
+    return '';
   }
 
   /**
