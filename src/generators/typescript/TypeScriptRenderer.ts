@@ -52,7 +52,7 @@ export abstract class TypeScriptRenderer extends AbstractRenderer<TypeScriptOpti
     if (Array.isArray(model)) {
       return model.map(t => this.renderType(t)).join(' | ');
     }
-    if (model.enum !== undefined) {
+    if (model.enum !== undefined && model.enum.length > 1) {
       return model.enum.map(value => typeof value === 'string' ? `"${value}"` : value).join(' | ');
     }
     if (model.$ref !== undefined) {
@@ -65,6 +65,13 @@ export abstract class TypeScriptRenderer extends AbstractRenderer<TypeScriptOpti
       return model.items.map(t => this.renderType(t)).join(' | ');
     }
     return this.toTsType(model.type, model);
+  }
+
+  renderAssignment(model: CommonModel | CommonModel[]): string {
+    if (!Array.isArray(model) && model.enum !== undefined && model.enum.length === 1) {
+      return `"${model.enum[0]}"`;
+    }
+    return '';
   }
 
   /**

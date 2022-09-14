@@ -6,7 +6,7 @@ import { CommonModel } from '../models/CommonModel';
  * @param model 
  */
 export function isEnum(model: CommonModel) : boolean {
-  if (model.enum !== undefined) {
+  if (model.enum !== undefined && model.enum.length > 1) {
     return true;
   }
   return false;
