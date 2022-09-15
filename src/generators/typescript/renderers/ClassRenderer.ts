@@ -69,13 +69,17 @@ export const TS_DEFAULT_CLASS_PRESET: ClassPreset<ClassRenderer> = {
   },
   ctor({ renderer, model }) : string {
     const properties = model.properties || {};
-    const assignments = Object.entries(properties).map(([propertyName, property]) => {
-      propertyName = renderer.nameProperty(propertyName, property);
-      return `this._${propertyName} = input.${propertyName};`;
-    });
-    const ctorProperties = Object.entries(properties).map(([propertyName, property]) => {
-      return renderer.renderProperty(propertyName, property).replace(';', ',');
-    });
+    const assignments = Object.entries(properties)
+      .filter(([propertyName, property]) => !renderer.getConstValue(property))
+      .map(([propertyName, property]) => {
+        propertyName = renderer.nameProperty(propertyName, property);
+        return `this._${propertyName} = input.${propertyName};`;
+      });
+    const ctorProperties = Object.entries(properties)
+      .filter(([propertyName, property]) => !renderer.getConstValue(property))
+      .map(([propertyName, property]) => {
+        return renderer.renderProperty(propertyName, property).replace(';', ',');
+      });
 
     return `constructor(input: {
 ${renderer.indent(renderer.renderBlock(ctorProperties))}
@@ -84,6 +88,10 @@ ${renderer.indent(renderer.renderBlock(assignments))}
 }`;
   },
   property({ renderer, propertyName, property, type }): string {
+    const constValue = renderer.getConstValue(property);
+    if (constValue) {
+      return `private _${renderer.renderProperty(propertyName, property, type)}`.replace(';', ` = ${constValue};`);
+    }
     return `private _${renderer.renderProperty(propertyName, property, type)}`;
   },
   getter({ renderer, model, propertyName, property, type }): string {
@@ -108,6 +116,8 @@ ${renderer.indent(renderer.renderBlock(assignments))}
       const mapType = renderer.renderType(property);
       signature = `: Map<String, ${mapType}> | undefined`;
     }
-    return `set ${propertyName}(${propertyName}${signature}) { this._${propertyName} = ${propertyName}; }`;
+    const constValue = renderer.getConstValue(property);
+    const setterContent = !constValue ? ` this._${propertyName} = ${propertyName}; ` : '';
+    return `set ${propertyName}(${propertyName}${signature}) {${setterContent}}`;
   },
 };

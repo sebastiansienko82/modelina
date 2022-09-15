@@ -117,6 +117,10 @@ export const JAVA_DEFAULT_CLASS_PRESET: ClassPreset<ClassRenderer> = {
     if (type === PropertyType.additionalProperty || type === PropertyType.patternProperties) {
       propertyType = `Map<String, ${propertyType}>`;
     }
+    const constValue = renderer.getConstValue(property);
+    if (constValue) {
+      return `private ${propertyType} ${propertyName} = ${constValue};`;
+    }
     return `private ${propertyType} ${propertyName};`;
   },
   getter({ renderer, propertyName, property, type }) {
@@ -135,6 +139,8 @@ export const JAVA_DEFAULT_CLASS_PRESET: ClassPreset<ClassRenderer> = {
     if (type === PropertyType.additionalProperty || type === PropertyType.patternProperties) {
       setterType = `Map<String, ${setterType}>`;
     }
-    return `public void set${setterName}(${setterType} ${formattedPropertyName}) { this.${formattedPropertyName} = ${formattedPropertyName}; }`;
+    const constValue = renderer.getConstValue(property);
+    const setterContent = !constValue ? ` this.${formattedPropertyName} = ${formattedPropertyName}; ` : '';
+    return `public void set${setterName}(${setterType} ${formattedPropertyName}) {${setterContent}}`;
   }
 };

@@ -3,6 +3,7 @@ import { JavaGenerator, JavaOptions } from './JavaGenerator';
 import { CommonModel, CommonInputModel, Preset } from '../../models';
 import { FormatHelpers, ModelKind, TypeHelpers } from '../../helpers';
 import { isReservedJavaKeyword } from './Constants';
+import { isConstant } from '../../interpreter/Utils';
 
 /**
  * Common renderer for Java types
@@ -61,7 +62,8 @@ export abstract class JavaRenderer extends AbstractRenderer<JavaOptions, JavaGen
     const kind = TypeHelpers.extractKind(model);
     if (
       kind === ModelKind.PRIMITIVE ||
-      kind === ModelKind.ARRAY
+      kind === ModelKind.ARRAY ||
+      isConstant(model)
     ) {
       const format = model.getFromOriginalInput('format');
       return this.toClassType(this.toJavaType(format || model.type, model));

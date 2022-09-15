@@ -5,6 +5,7 @@ import { FormatHelpers } from '../../helpers';
 import { CommonModel, CommonInputModel, Preset, PropertyType } from '../../models';
 import { DefaultPropertyNames, getUniquePropertyName } from '../../helpers/NameHelpers';
 import { isReservedTypeScriptKeyword } from './Constants';
+import { isEnum } from '../../interpreter/Utils';
 
 /**
  * Common renderer for TypeScript types
@@ -52,7 +53,7 @@ export abstract class TypeScriptRenderer extends AbstractRenderer<TypeScriptOpti
     if (Array.isArray(model)) {
       return model.map(t => this.renderType(t)).join(' | ');
     }
-    if (model.enum !== undefined) {
+    if (model.enum !== undefined && isEnum(model)) {
       return model.enum.map(value => typeof value === 'string' ? `"${value}"` : value).join(' | ');
     }
     if (model.$ref !== undefined) {

@@ -1,6 +1,7 @@
 import { AbstractGenerator, CommonGeneratorOptions } from './AbstractGenerator';
 import { CommonModel, CommonInputModel, Preset } from '../models';
 import { FormatHelpers, IndentationTypes } from '../helpers';
+import { isConstant } from '../interpreter/Utils';
 
 /**
  * Abstract renderer with common helper methods
@@ -36,6 +37,13 @@ export abstract class AbstractRenderer<
   renderBlock(lines: string[], newLines = 1): string {
     const n = Array(newLines).fill('\n').join('');
     return lines.filter(Boolean).join(n);
+  }
+
+  getConstValue(model: CommonModel | CommonModel[]): string {
+    if (!Array.isArray(model) && model.enum !== undefined && isConstant(model)) {
+      return `"${model.enum[0]}"`;
+    }
+    return '';
   }
 
   indent(
