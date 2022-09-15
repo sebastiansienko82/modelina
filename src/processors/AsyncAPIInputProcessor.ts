@@ -52,9 +52,9 @@ export class AsyncAPIInputProcessor extends AbstractInputProcessor {
   ): AsyncapiV2Schema | boolean {
     if (typeof schema === 'boolean') {return schema;}
     const schemaUid = schema.uid();
-    if (alreadyIteratedSchemas.has(schemaUid)) {
+    /*if (alreadyIteratedSchemas.has(schemaUid)) {
       return alreadyIteratedSchemas.get(schemaUid) as AsyncapiV2Schema; 
-    }
+    }*/
 
     const convertedSchema = Object.assign(new AsyncapiV2Schema(), schema.json());
     convertedSchema[this.MODELGEN_INFFERED_NAME] = schemaUid;
