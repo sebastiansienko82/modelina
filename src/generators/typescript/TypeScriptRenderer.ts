@@ -67,13 +67,6 @@ export abstract class TypeScriptRenderer extends AbstractRenderer<TypeScriptOpti
     return this.toTsType(model.type, model);
   }
 
-  renderAssignment(model: CommonModel | CommonModel[]): string {
-    if (!Array.isArray(model) && model.enum !== undefined && model.enum.length === 1) {
-      return `"${model.enum[0]}"`;
-    }
-    return '';
-  }
-
   /**
    * JSON Schema types to TS
    * 

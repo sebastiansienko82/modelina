@@ -38,6 +38,13 @@ export abstract class AbstractRenderer<
     return lines.filter(Boolean).join(n);
   }
 
+  renderAssignment(model: CommonModel | CommonModel[]): string {
+    if (!Array.isArray(model) && model.enum !== undefined && model.enum.length === 1) {
+      return `"${model.enum[0]}"`;
+    }
+    return '';
+  }
+
   indent(
     content: string, 
     size?: number, 

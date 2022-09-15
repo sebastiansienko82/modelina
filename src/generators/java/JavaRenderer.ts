@@ -70,13 +70,6 @@ export abstract class JavaRenderer extends AbstractRenderer<JavaOptions, JavaGen
     return this.nameType(model.$id, model);
   }
 
-  renderAssignment(model: CommonModel | CommonModel[]): string {
-    if (!Array.isArray(model) && model.enum !== undefined && model.enum.length === 1) {
-      return `"${model.enum[0]}"`;
-    }
-    return '';
-  }
-
   /**
    * Returns the Java corresponding type from CommonModel type or JSON schema format
    * @param type 
